@@ -39,6 +39,20 @@ class Planetas(db.Model):
     terreno = mapped_column(String(100), nullable=False)
     superficie_acuosa = mapped_column(String(100), nullable=False)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "diametro": self.diametro,
+            "tiempo_rotacion": self.tiempo_rotacion,
+            "tiempo_orbitacion": self.tiempo_orbitacion,
+            "gravedad": self.gravedad,
+            "poblacion": self.poblacion,
+            "clima": self.clima,
+            "terreno": self.terreno,
+            "superficie_acuosa": self.superficie_acuosa
+        }
+
 class Vehiculos(db.Model):
     __tablename__ = 'vehiculos'
     id = mapped_column(Integer, primary_key=True)
@@ -54,6 +68,22 @@ class Vehiculos(db.Model):
     consumibles = mapped_column(String(100), nullable=False)
     url = mapped_column(String(200), nullable=False)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "modelo": self.modelo,
+            "clase_vehiculo": self.clase_vehiculo,
+            "fabricante": self.fabricante,
+            "longitud": self.longitud,
+            "precio": self.precio,
+            "tripulacion": self.tripulacion,
+            "velocidad_max": self.velocidad_max,
+            "capacidad_carga": self.capacidad_carga,
+            "consumibles": self.consumibles,
+            "url": self.url
+        }
+
 class Personajes(db.Model):
     __tablename__ = 'personajes'
     id = mapped_column(Integer, primary_key=True)
@@ -67,3 +97,18 @@ class Personajes(db.Model):
     color_piel = mapped_column(String(20), nullable=False)
     hogar = mapped_column(String(40), nullable=False)
     url = mapped_column(String(100), nullable=False)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "fecha_nacimiento": self.fecha_nacimiento,
+            "color_ojos": self.color_ojos,
+            "genero": self.genero,
+            "color_pelo": self.color_pelo,
+            "estatura": self.estatura,
+            "peso": self.peso,
+            "color_piel": self.color_piel,
+            "hogar": self.hogar,
+            "url": self.url
+        }
