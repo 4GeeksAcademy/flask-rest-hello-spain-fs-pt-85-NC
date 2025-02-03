@@ -6,17 +6,18 @@ from sqlalchemy import Integer, String, Boolean
 db = SQLAlchemy()
 
 
-class Usuario(db.Model):
-    __tablename__ = "usuario"
+class User(db.Model):
+    __tablename__ = "user"
 
     id = mapped_column(Integer, primary_key=True)
-    nombre = mapped_column(String(50), nullable=False)
+    nombre_usuario = mapped_column(String(50), nullable=False, unique=True)
+    nombre_completo = mapped_column(String(80), nullable=False)
     email = mapped_column(String(120), nullable=False, unique=True)
     contraseña = mapped_column(String(80))
     is_active = mapped_column(Boolean)
 
     def __repr__(self):
-        return '<Usuario %r>' % self.nombre
+        return '<user %r>' % self.nombre_usuario
 
     def serialize(self):
         return {
