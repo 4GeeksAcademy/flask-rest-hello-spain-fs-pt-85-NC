@@ -71,15 +71,21 @@ def get_user(id):
 
 ##### POST ENDPOINT
 @app.route('/user', methods=['POST'])
-def create_user():
+def crear_user():
     request_data = request.json
     print(request_data)
-    user = User(email=request_data["email"], password=request_data["password"])
+
+    user = User(
+        username=request_data["username"],
+        email=request_data["email"],
+        password=request_data["password"]
+    )
+
     db.session.add(user)
     db.session.commit()
 
     response_body = {
-        "msg":"user created"
+        "msg": "User creado"
     }
 
     return jsonify(response_body), 200
@@ -151,7 +157,7 @@ def crear_vehiculo():
     db.session.commit()
 
     response_body = {
-        "msg": "Vehicle creado"
+        "msg": "Vehiculo creado"
     }
 
     return jsonify(response_body), 200
@@ -317,6 +323,118 @@ def delete_person(id):
     }
 
     return jsonify(response_body), 200
+
+#Parte de los favoritos
+# Endpoint obtener favoritos de un usuario
+@app.route('/usuarios/favoritos', methods=['GET'])
+def obtener_favoritos_usuario():
+    try:
+        user_id = 1  
+        user = db.session.execute(select(User).filter_by(id=user_id)).scalar_one()
+        favoritos = {
+            "personajes": [favorite.serialize() for favorite in user.personajes_favoritos],
+            "planetas": [favorite.serialize() for favorite in user.planetas_favoritos],
+            "vehiculos": [favorite.serialize() for favorite in user.vehiculos_favoritos]
+        }
+
+        return jsonify({"msg": "Favoritos del usuario", "favoritos": favoritos}), 200
+    except Exception as e:
+        return jsonify({"msg": f"Error: {str(e)}"}), 400
+
+
+# Añadir un personaje a favoritos
+@app.route('/favorito/personaje/<int:personaje_id>', methods=['POST'])
+def añadir_favorito_personaje(personaje_id):
+    try:
+        user_id = 1  
+        user = db.session.execute(select(User).filter_by(id=user_id)).scalar_one()
+        personaje = db.session.execute(select(Personajes).filter_by(id=personaje_id)).scalar_one()
+
+        user.personajes_favoritos.append(personaje)
+        db.session.commit()
+
+        return jsonify({"msg": f"Personaje {personaje.nombre} añadido a favoritos"}), 200
+    except Exception as e:
+        return jsonify({"msg": f"Error: {str(e)}"}), 400
+
+
+# Añadir un planeta a favoritos
+@app.route('/favorito/planeta/<int:planeta_id>', methods=['POST'])
+def añadir_favorito_planeta(planeta_id):
+    try:
+        user_id = 1  
+        user = db.session.execute(select(User).filter_by(id=user_id)).scalar_one()
+        planeta = db.session.execute(select(Planetas).filter_by(id=planeta_id)).scalar_one()
+
+        user.planetas_favoritos.append(planeta)
+        db.session.commit()
+
+        return jsonify({"msg": f"Planeta {planeta.nombre} añadido a favoritos"}), 200
+    except Exception as e:
+        return jsonify({"msg": f"Error: {str(e)}"}), 400
+
+
+# Eliminar un personaje de favoritos
+@app.route('/favorito/personaje/<int:personaje_id>', methods=['DELETE'])
+def eliminar_favorito_personaje(personaje_id):
+    try:
+        user_id = 1  
+        user = db.session.execute(select(User).filter_by(id=user_id)).scalar_one()
+        personaje = db.session.execute(select(Personajes).filter_by(id=personaje_id)).scalar_one()
+
+        user.personajes_favoritos.remove(personaje)
+        db.session.commit()
+
+        return jsonify({"msg": f"Personaje {personaje.nombre} eliminado de favoritos"}), 200
+    except Exception as e:
+        return jsonify({"msg": f"Error: {str(e)}"}), 400
+
+
+# Eliminar un planeta de favoritos
+@app.route('/favorito/planeta/<int:planeta_id>', methods=['DELETE'])
+def eliminar_favorito_planeta(planeta_id):
+    try:
+        user_id = 1  
+        user = db.session.execute(select(User).filter_by(id=user_id)).scalar_one()
+        planeta = db.session.execute(select(Planetas).filter_by(id=planeta_id)).scalar_one()
+
+        user.planetas_favoritos.remove(planeta)
+        db.session.commit()
+
+        return jsonify({"msg": f"Planeta {planeta.nombre} eliminado de favoritos"}), 200
+    except Exception as e:
+        return jsonify({"msg": f"Error: {str(e)}"}), 400
+    
+# Añadir un vehículo a favoritos
+@app.route('/favorito/vehiculo/<int:vehiculo_id>', methods=['POST'])
+def añadir_favorito_vehiculo(vehiculo_id):
+    try:
+        user_id = 1  # Puedes obtenerlo de la sesión o pasarlo como parámetro
+        user = db.session.execute(select(User).filter_by(id=user_id)).scalar_one()
+        vehiculo = db.session.execute(select(Vehiculos).filter_by(id=vehiculo_id)).scalar_one()
+
+        user.vehiculos_favoritos.append(vehiculo)
+        db.session.commit()
+
+        return jsonify({"msg": f"Vehículo {vehiculo.nombre} añadido a favoritos"}), 200
+    except Exception as e:
+        return jsonify({"msg": f"Error: {str(e)}"}), 400
+    
+# Eliminar un vehículo de favoritos
+@app.route('/favorito/vehiculo/<int:vehiculo_id>', methods=['DELETE'])
+def eliminar_favorito_vehiculo(vehiculo_id):
+    try:
+        user_id = 1  # Puedes obtenerlo de la sesión o pasarlo como parámetro
+        user = db.session.execute(select(User).filter_by(id=user_id)).scalar_one()
+        vehiculo = db.session.execute(select(Vehiculos).filter_by(id=vehiculo_id)).scalar_one()
+
+        user.vehiculos_favoritos.remove(vehiculo)
+        db.session.commit()
+
+        return jsonify({"msg": f"Vehículo {vehiculo.nombre} eliminado de favoritos"}), 200
+    except Exception as e:
+        return jsonify({"msg": f"Error: {str(e)}"}), 400
+
 
 
 # this only runs if `$ python src/app.py` is executed
