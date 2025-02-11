@@ -1,17 +1,16 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, String
+from sqlalchemy import Integer, String, Column, ForeignKey
 from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
 
 class User(db.Model):
     __tablename__ = 'user'
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    username: Mapped[str] = mapped_column(String(120), nullable=False)
-    email: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
-    password: Mapped[str] = mapped_column(String(80), nullable=False)
+    id = db.Column(Integer, primary_key=True)
+    username = db.Column(String(120), nullable=False, unique=True)
+    email = db.Column(String(120), nullable=False, unique=True)
+    password = db.Column(String(80), nullable=False)
 
     personajes_favoritos = relationship("Personajes", secondary="personajes_favoritos", back_populates="users_favorites")
     planetas_favoritos = relationship("Planetas", secondary="planetas_favoritos", back_populates="users_favorites")
@@ -123,15 +122,15 @@ class Personajes(db.Model):
 # FAVS
 class PersonajesFavoritos(db.Model):
     __tablename__ = 'personajes_favoritos'
-    user_id = mapped_column(Integer, db.ForeignKey('user.id'), primary_key=True)
-    personaje_id = mapped_column(Integer, db.ForeignKey('personajes.id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    personaje_id = db.Column(db.Integer, db.ForeignKey('personajes.id'), primary_key=True)
 
-class PanetasFavoritos(db.Model):
+class PlanetasFavoritos(db.Model):
     __tablename__ = 'planetas_favoritos'
-    user_id = mapped_column(Integer, db.ForeignKey('user.id'), primary_key=True)
-    planeta_id = mapped_column(Integer, db.ForeignKey('planetas.id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    planeta_id = db.Column(db.Integer, db.ForeignKey('planetas.id'), primary_key=True)
 
 class VehiculosFavoritos(db.Model):
     __tablename__ = 'vehiculos_favoritos'
-    user_id = mapped_column(Integer, db.ForeignKey('user.id'), primary_key=True)
-    vehiculo_id = mapped_column(Integer, db.ForeignKey('vehiculos.id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    vehiculo_id = db.Column(db.Integer, db.ForeignKey('vehiculos.id'), primary_key=True)

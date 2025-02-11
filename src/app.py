@@ -54,19 +54,34 @@ def handle_hello():
 
 
 #consulta de un solo registro
+# @app.route('/user/<int:id>', methods=['GET'])
+# def get_user(id):
+#     try:
+#         user = db.session.execute(select(User).filter_by(id=id)).scalar_one()
+
+#         response_body = {
+#             "msg": "Hello, this is your GET /user response ",
+#             "result":user.serialize()
+#         }
+
+#         return jsonify(response_body), 200
+#     except:
+#         return jsonify({"msg":"user not exist"}), 404
 @app.route('/user/<int:id>', methods=['GET'])
 def get_user(id):
     try:
-        user = db.session.execute(select(User).filter_by(id=id)).scalar_one()
+        # Usando db.session.get para una consulta más limpia
+        user = db.session.get(User, id)  # Busca directamente por ID
+        if user is None:
+            return jsonify({"msg": "User not found"}), 404
 
         response_body = {
-            "msg": "Hello, this is your GET /user response ",
-            "result":user.serialize()
+            "msg": "User details",
+            "result": user.serialize()
         }
-
         return jsonify(response_body), 200
-    except:
-        return jsonify({"msg":"user not exist"}), 404
+    except Exception as e:
+        return jsonify({"msg": f"Error: {str(e)}"}), 500
 
 
 ##### POST ENDPOINT
